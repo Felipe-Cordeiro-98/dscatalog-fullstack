@@ -1,5 +1,6 @@
 package com.felipecordeiro.dscatalog.resources;
 
+import com.felipecordeiro.dscatalog.dto.CategoryDTO;
 import com.felipecordeiro.dscatalog.entities.Category;
 import com.felipecordeiro.dscatalog.services.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class CategoryResource {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> findAll() {
-        List<Category> categories = categoryService.findAll();
+    public ResponseEntity<List<CategoryDTO>> findAll() {
+        List<CategoryDTO> categories = categoryService.findAll();
         return ResponseEntity.ok(categories);
     }
 }

@@ -1,5 +1,6 @@
 package com.felipecordeiro.dscatalog.services;
 
+import com.felipecordeiro.dscatalog.dto.CategoryDTO;
 import com.felipecordeiro.dscatalog.entities.Category;
 import com.felipecordeiro.dscatalog.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> findAll() {
+        return categoryRepository.findAll()
+                .stream().map(CategoryDTO::new).toList();
     }
 }
