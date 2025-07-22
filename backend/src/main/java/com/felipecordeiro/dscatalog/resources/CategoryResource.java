@@ -5,9 +5,7 @@ import com.felipecordeiro.dscatalog.entities.Category;
 import com.felipecordeiro.dscatalog.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,11 @@ public class CategoryResource {
     public ResponseEntity<List<CategoryDTO>> findAll() {
         List<CategoryDTO> categories = categoryService.findAll();
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
+        CategoryDTO category = categoryService.findById(id);
+        return ResponseEntity.ok(category);
     }
 }
