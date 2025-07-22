@@ -3,9 +3,11 @@ package com.felipecordeiro.dscatalog.services;
 import com.felipecordeiro.dscatalog.dto.CategoryDTO;
 import com.felipecordeiro.dscatalog.entities.Category;
 import com.felipecordeiro.dscatalog.repositories.CategoryRepository;
+import com.felipecordeiro.dscatalog.services.exceptions.DatabaseException;
 import com.felipecordeiro.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,19 @@ public class CategoryService {
             return new CategoryDTO(category);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Category not found with id: " + id);
+        }
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Category not found with id: " + id);
+        }
+
+        try {
+            categoryRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Integrity violation: cannot delete category with products");
         }
     }
 }
