@@ -1,7 +1,10 @@
 package com.felipecordeiro.dscatalog.services;
 
+import com.felipecordeiro.dscatalog.dto.CategoryDTO;
 import com.felipecordeiro.dscatalog.dto.ProductDTO;
+import com.felipecordeiro.dscatalog.entities.Category;
 import com.felipecordeiro.dscatalog.entities.Product;
+import com.felipecordeiro.dscatalog.repositories.CategoryRepository;
 import com.felipecordeiro.dscatalog.repositories.ProductRepository;
 import com.felipecordeiro.dscatalog.services.exceptions.DatabaseException;
 import com.felipecordeiro.dscatalog.services.exceptions.ResourceNotFoundException;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
@@ -35,7 +39,7 @@ public class ProductService {
     @Transactional
     public ProductDTO insert(ProductDTO productDTO) {
         Product product = new Product();
-//        product.setName(productDTO.name());
+        copyDtoToEntity(productDTO, product);
         product = productRepository.save(product);
         return new ProductDTO(product);
     }
@@ -44,7 +48,7 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO productDTO) {
         try {
             Product product = productRepository.getReferenceById(id);
-//            product.setName(productDTO.name());
+            copyDtoToEntity(productDTO, product);
             product = productRepository.save(product);
             return new ProductDTO(product);
         } catch (EntityNotFoundException e) {
@@ -62,6 +66,20 @@ public class ProductService {
             productRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation: cannot delete product");
+        }
+    }
+
+    private void copyDtoToEntity(ProductDTO productDTO, Product product) {
+        product.setName(productDTO.name());
+        product.setDescription(productDTO.description());
+        product.setPrice(productDTO.price());
+        product.setImgUrl(productDTO.imgUrl());
+        product.setDate(productDTO.date());
+
+        product.getCategories().clear();
+        for (CategoryDTO categoryDTO : productDTO.categories()) {
+            Category category = categoryRepository.getReferenceById(categoryDTO.id());
+            product.getCategories().add(category);
         }
     }
 }
