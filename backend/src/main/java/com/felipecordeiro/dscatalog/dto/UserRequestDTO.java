@@ -1,11 +1,13 @@
 package com.felipecordeiro.dscatalog.dto;
 
 import com.felipecordeiro.dscatalog.entities.User;
+import com.felipecordeiro.dscatalog.services.validation.UserInsertValid;
 import jakarta.validation.constraints.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@UserInsertValid
 public record UserRequestDTO(
         @NotBlank(message = "O primeiro nome é obrigatório")
         @Size(min = 2, max = 50, message = "O primeiro nome deve ter entre 2 e 50 caracteres")
