@@ -1,14 +1,17 @@
 package com.felipecordeiro.dscatalog.dto;
 
 import com.felipecordeiro.dscatalog.entities.User;
-import com.felipecordeiro.dscatalog.services.validation.UserInsertValid;
-import jakarta.validation.constraints.*;
+import com.felipecordeiro.dscatalog.services.validation.UserUpdateValid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@UserInsertValid
-public record UserRequestDTO(
+@UserUpdateValid
+public record UserUpdateDTO(
         @NotBlank(message = "O primeiro nome é obrigatório")
         @Size(min = 2, max = 50, message = "O primeiro nome deve ter entre 2 e 50 caracteres")
         String firstName,
@@ -21,18 +24,13 @@ public record UserRequestDTO(
         @Email(message = "Formato de e-mail inválido")
         String email,
 
-        @NotBlank(message = "A senha é obrigatória")
-        @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
-        String password,
-
         @NotEmpty(message = "É necessário informar pelo menos um papel (role)")
         Set<RoleDTO> roles
 ) {
-    public UserRequestDTO(User user) {
+    public UserUpdateDTO(User user) {
         this(user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getPassword(),
                 user.getRoles().stream().map(RoleDTO::new).collect(Collectors.toSet())
         );
     }

@@ -1,8 +1,9 @@
 package com.felipecordeiro.dscatalog.services;
 
 import com.felipecordeiro.dscatalog.dto.RoleDTO;
-import com.felipecordeiro.dscatalog.dto.UserRequestDTO;
+import com.felipecordeiro.dscatalog.dto.UserInsertDTO;
 import com.felipecordeiro.dscatalog.dto.UserResponseDTO;
+import com.felipecordeiro.dscatalog.dto.UserUpdateDTO;
 import com.felipecordeiro.dscatalog.entities.Role;
 import com.felipecordeiro.dscatalog.entities.User;
 import com.felipecordeiro.dscatalog.repositories.RoleRepository;
@@ -40,20 +41,19 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO insert(UserRequestDTO userRequestDTO) {
+    public UserResponseDTO insert(UserInsertDTO userInsertDTO) {
         User user = new User();
-        copyDtoToEntity(userRequestDTO, user);
-        user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
+        copyDtoToEntity(userInsertDTO, user);
+        user.setPassword(passwordEncoder.encode(userInsertDTO.password()));
         user = userRepository.save(user);
         return new UserResponseDTO(user);
     }
 
     @Transactional
-    public UserResponseDTO update(Long id, UserRequestDTO userRequestDTO) {
+    public UserResponseDTO update(Long id, UserUpdateDTO userUpdateDTO) {
         try {
             User user = userRepository.getReferenceById(id);
-            copyDtoToEntity(userRequestDTO, user);
-            user.setPassword(passwordEncoder.encode(userRequestDTO.password()));
+            copyDtoToEntity(userUpdateDTO, user);
             user = userRepository.save(user);
             return new UserResponseDTO(user);
         } catch (EntityNotFoundException e) {
@@ -74,13 +74,25 @@ public class UserService {
         }
     }
 
-    private void copyDtoToEntity(UserRequestDTO userRequestDTO, User user) {
-        user.setFirstName(userRequestDTO.firstName());
-        user.setLastName(userRequestDTO.lastName());
-        user.setEmail(userRequestDTO.email());
+    private void copyDtoToEntity(UserInsertDTO userInsertDTO, User user) {
+        user.setFirstName(userInsertDTO.firstName());
+        user.setLastName(userInsertDTO.lastName());
+        user.setEmail(userInsertDTO.email());
 
         user.getRoles().clear();
-        for (RoleDTO roleDTO : userRequestDTO.roles()) {
+        for (RoleDTO roleDTO : userInsertDTO.roles()) {
+            Role role = roleRepository.getReferenceById(roleDTO.id());
+            user.getRoles().add(role);
+        }
+    }
+
+    private void copyDtoToEntity(UserUpdateDTO dto, User user) {
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setEmail(dto.email());
+
+        user.getRoles().clear();
+        for (RoleDTO roleDTO : dto.roles()) {
             Role role = roleRepository.getReferenceById(roleDTO.id());
             user.getRoles().add(role);
         }

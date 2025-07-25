@@ -1,7 +1,8 @@
 package com.felipecordeiro.dscatalog.resources;
 
-import com.felipecordeiro.dscatalog.dto.UserRequestDTO;
+import com.felipecordeiro.dscatalog.dto.UserInsertDTO;
 import com.felipecordeiro.dscatalog.dto.UserResponseDTO;
+import com.felipecordeiro.dscatalog.dto.UserUpdateDTO;
 import com.felipecordeiro.dscatalog.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,8 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO newUser = userService.insert(userRequestDTO);
+    public ResponseEntity<UserResponseDTO> insert(@Valid @RequestBody UserInsertDTO userInsertDTO) {
+        UserResponseDTO newUser = userService.insert(userInsertDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(newUser.id())
                 .toUri();
@@ -42,8 +43,8 @@ public class UserResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO updatedUser = userService.update(id, userRequestDTO);
+    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        UserResponseDTO updatedUser = userService.update(id, userUpdateDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
