@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -46,8 +47,8 @@ public class JwtService {
                     .withSubject(user.getUsername())
                     .withIssuer("dscatalog-api")
                     .withClaim("authorities", authorities)
-                    .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + expirationMillis))
+                    .withIssuedAt(Instant.now())
+                    .withExpiresAt(Instant.now().plusMillis(expirationMillis))
                     .sign(algorithm);
         } catch (JWTCreationException e) {
             throw new TokenCreationException("Error creating JWT token", e);
