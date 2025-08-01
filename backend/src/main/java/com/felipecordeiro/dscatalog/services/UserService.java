@@ -12,23 +12,16 @@ import com.felipecordeiro.dscatalog.services.exceptions.DatabaseException;
 import com.felipecordeiro.dscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
-
-    private static Logger logger = LoggerFactory.getLogger(UserService.class);
+public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -103,16 +96,5 @@ public class UserService implements UserDetailsService {
             Role role = roleRepository.getReferenceById(roleDTO.id());
             user.getRoles().add(role);
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
-            logger.error("User not found: " + username);
-            throw new UsernameNotFoundException("Email not found: " + username);
-        }
-        logger.info("User found: " + username);
-        return user;
     }
 }
